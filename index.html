@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>名偵探Nala：最大公因數與最小公倍數解謎大冒險</title>
+    <title>名偵探Nala：最大公因數與最小公倍數隨機解謎大冒險</title>
     <style>
         :root {
             --primary-color: #1a1a2e;
@@ -154,18 +154,18 @@
 <body>
 
 <div class="game-container" id="app-container">
-    <!-- 首頁：輸入姓名與說明 -->
+    <!-- 首頁：輸入姓名與排行榜 -->
     <div id="welcome-screen">
-        <h1>🔍 名偵探Nala：數學解謎事件簿</h1>
-        <div class="subtitle">專為六年級設計：最大公因數與最小公倍數闖關</div>
+        <h1>🔍 名偵探Nala：數學隨機解謎事件簿</h1>
+        <div class="subtitle">動態隨機題庫：最大公因數與最小公倍數挑戰</div>
         <div class="conan-box">
-            <strong>Nala：</strong>「歡迎來到少年偵探團特訓！這次總共有 **5 個挑戰關卡**。系統會為您計時並記錄排行榜，快輸入你的名字開始挑戰吧！」
+            <strong>Nala：</strong>「黑衣組織每次出題都不一樣！這次系統從題庫中**隨機抽選 5 道關卡**考考你。準備好了嗎，偵探？」
         </div>
         <div class="form-group">
             <label for="player-name">請輸入挑戰者姓名：</label><br>
-            <input type="text" id="player-name" placeholder="例如：小明偵探" value="優秀偵探">
+            <input type="text" id="player-name" placeholder="例如：新一小偵探" value="優秀偵探">
         </div>
-        <button class="start-btn" onclick="startGame()">開始解謎闖關</button>
+        <button class="start-btn" onclick="startGame()">開始隨機解謎</button>
         
         <div style="margin-top: 30px;">
             <h3 style="color: #f1c40f; font-size: 16px; text-align: center;">🏆 歷史排行榜 Top 5</h3>
@@ -225,54 +225,86 @@
             <tbody id="final-leaderboard-body"></tbody>
         </table>
 
-        <button class="start-btn" style="margin-top: 25px;" onclick="location.reload()">再次挑戰</button>
+        <button class="start-btn" style="margin-top: 25px;" onclick="location.reload()">再次隨機挑戰</button>
     </div>
 </div>
 
 <script>
-    const stages = [
+    // 完整題庫（包含 10 道精選題目，每次隨機抽 5 題）
+    const fullQuestionPool = [
         {
-            title: "事件一：炸彈的拆除密碼（最大公因數）",
             dialogue: "Nala：「拆彈專家遇到難題了！必須把 24 顆紅寶石和 36 顆藍寶石平均分裝到多個盒子裡，每個盒子裡的紅寶石要一樣多、藍寶石也要一樣多，請問**最多**可以裝成幾個盒子？」",
             question: "求 24 和 36 的最大公因數 (HCF) 是多少？",
             options: ["6", "12", "18", "24"],
             answer: "12",
-            explanation: "沒錯！24 的因數有 12，36 的因數也有 12，最大公因數就是 12 盒。炸彈安全解除！"
+            explanation: "24 的因數有 12，36 的因數也有 12，最大公因數就是 12 盒。炸彈安全解除！"
         },
         {
-            title: "事件二：黑衣組織的巡邏車（最小公倍數）",
             dialogue: "Nala：「我們必須避開黑衣組織的巡邏車。A車每 6 分鐘發車一次，B車每 8 分鐘發車一次。如果他們剛好在 12:00 同時發車，下一次**同時發車**是幾分鐘後？」",
             question: "求 6 和 8 的最小公倍數 (LCM) 是多少？",
             options: ["12 分鐘", "24 分鐘", "48 分鐘", "72 分鐘"],
             answer: "24 分鐘",
-            explanation: "太棒了！6 和 8 的最小公倍數是 24。每 24 分鐘兩車會同時出發，我們趁現在快溜過去！"
+            explanation: "6 和 8 的最小公倍數是 24。每 24 分鐘兩車會同時出發！"
         },
         {
-            title: "事件三：神祕的磚塊密室（應用題）",
             dialogue: "Nala：「密室的牆壁長 60 公分、寬 45 公分。如果想用大小完全相同的正方形磁磚把它鋪滿，且磁磚不能切割，正方形磁磚的邊長**最大**是多少公分？」",
             question: "求 60 和 45 的最大公因數？",
             options: ["5 公分", "10 公分", "15 公分", "30 公分"],
             answer: "15 公分",
-            explanation: "推理正確！60 和 45 的最大公因數是 15，所以最大正方形邊長為 15 公分，牆壁機關打開了！"
+            explanation: "60 和 45 的最大公因數是 15，所以最大正方形邊長為 15 公分！"
         },
         {
-            title: "事件四：怪盜基德的預告信（最小公倍數）",
             dialogue: "Nala：「怪盜基德要在美術館下手！警報器每 15 分鐘閃爍一次，攝影機每 20 分鐘掃描一次。剛好在 10:00 同時閃爍與掃描，下次**同時發生**是在幾分鐘後？」",
             question: "求 15 和 20 的最小公倍數？",
             options: ["30 分鐘", "45 分鐘", "60 分鐘", "120 分鐘"],
             answer: "60 分鐘",
-            explanation: "神乎其技！15 和 20 的最小公倍數是 60 分鐘（也就是 1 小時），我們抓準時間準備堵截基德！"
+            explanation: "15 和 20 的最小公倍數是 60 分鐘（也就是 1 小時）！"
         },
         {
-            title: "最終決戰：解開最終真相",
-            dialogue: "Nala：「這是最後一題了！有一籃橘子，不管是 4 個一數或 6 個一數，都剛好分完沒有剩餘。如果這籃橘子大約有 30 幾顆，請問總共有幾顆？」",
+            dialogue: "Nala：「有一籃橘子，不管是 4 個一數或 6 個一數，都剛好分完沒有剩餘。如果這籃橘子大約有 30 幾顆，請問總共有幾顆？」",
             question: "找出 4 和 6 的公倍數中，在 30 到 40 之間的數字：",
             options: ["32 顆", "36 顆", "38 顆", "40 顆"],
             answer: "36 顆",
-            explanation: "太厲害了！4 和 6 的最小公倍數是 12，其倍數有 12、24、36、48...。介於 30 到 40 之間的只有 36 顆！真相永遠只有一個，你成功破案了！"
+            explanation: "4 和 6 的最小公倍數是 12，其倍數中介於 30 到 40 之間的只有 36 顆！"
+        },
+        {
+            dialogue: "Nala：「灰原哀正在配置解藥！A藥水每 9 小時檢驗一次，B藥水每 12 小時檢驗一次。如果現在同時檢驗，下次**同時檢驗**是在幾小時後？」",
+            question: "求 9 和 12 的最小公倍數？",
+            options: ["18 小時", "24 小時", "36 小時", "72 小時"],
+            answer: "36 小時",
+            explanation: "9 和 12 的最小公倍數是 36，藥水準時調配完成！"
+        },
+        {
+            dialogue: "Nala：「博士發明的徽章需要分發。有 42 個紅色徽章和 56 個藍色徽章，要平分給小朋友，每人得到的紅、藍徽章數量要一樣多，最多可以分給幾個人？」",
+            question: "求 42 和 56 的最大公因數？",
+            options: ["7", "14", "21", "28"],
+            answer: "14",
+            explanation: "42 與 56 的最大公因數是 14，最多可分給 14 位小朋友！"
+        },
+        {
+            dialogue: "Nala：「少年偵探團要搭公車。1路公車每 10 分鐘開出一班，3路公車每 15 分鐘開出一班。兩車同時開出後，至少過幾分鐘會再次同時開出？」",
+            question: "求 10 和 15 的最小公倍數？",
+            options: ["20 分鐘", "30 分鐘", "45 分鐘", "60 分鐘"],
+            answer: "30 分鐘",
+            explanation: "10 與 15 的最小公倍數是 30 分鐘！"
+        },
+        {
+            dialogue: "Nala：「現場遺留了一張長方形紙張，長 72 公分、寬 48 公分。想把它裁成大小相同的正方形且沒有剩餘，正方形邊長最大是幾公分？」",
+            question: "求 72 和 48 的最大公因數？",
+            options: ["12 公分", "16 公分", "24 公分", "36 公分"],
+            answer: "24 公分",
+            explanation: "72 與 48 的最大公因數是 24 公分！"
+        },
+        {
+            dialogue: "NalaUI：「最後一題危機！燈塔的紅燈每 5 秒閃一次，綠燈每 7 秒閃一次。兩燈同時閃爍後，經過幾秒會再次同時閃爍？」",
+            question: "求 5 和 7 的最小公倍數？",
+            options: ["12 秒", "25 秒", "35 秒", "70 秒"],
+            answer: "35 秒",
+            explanation: "5 和 7 互質，其最小公倍數就是兩數相乘得到 35 秒！"
         }
     ];
 
+    let selectedStages = [];
     let playerName = "";
     let currentStage = 0;
     let score = 0;
@@ -280,10 +312,19 @@
     let timerInterval = null;
     let elapsedTimeSeconds = 0;
 
-    // 初始化載入排行榜預覽
     window.onload = function() {
         renderLeaderboard("leaderboard-body");
     };
+
+    // 隨機打亂陣列函式 (Fisher-Yates shuffle)
+    function shuffleArray(array) {
+        let arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
 
     function startGame() {
         const inputName = document.getElementById("player-name").value.trim();
@@ -294,6 +335,10 @@
         playerName = inputName;
         document.getElementById("player-welcome-tag").innerText = `挑戰者：${playerName}`;
 
+        // 從題庫隨機抽選 5 題
+        let shuffledPool = shuffleArray(fullQuestionPool);
+        selectedStages = shuffledPool.slice(0, 5);
+
         // 切換畫面
         document.getElementById("welcome-screen").classList.add("hidden");
         document.getElementById("game-screen").classList.remove("hidden");
@@ -302,6 +347,8 @@
         startTime = Date.now();
         timerInterval = setInterval(updateTimer, 1000);
 
+        currentStage = 0;
+        score = 0;
         loadStage();
     }
 
@@ -314,21 +361,23 @@
     }
 
     function loadStage() {
-        if (currentStage >= stages.length) {
+        if (currentStage >= selectedStages.length) {
             endGame();
             return;
         }
 
-        const stage = stages[currentStage];
-        document.getElementById("level-indicator").innerText = `目前進度：第 ${currentStage + 1} / ${stages.length} 關`;
+        const stage = selectedStages[currentStage];
+        document.getElementById("level-indicator").innerText = `目前進度：第 ${currentStage + 1} / ${selectedStages.length} 關`;
         document.getElementById("score-indicator").innerText = `得分：${score} 分`;
         document.getElementById("conan-dialogue").innerHTML = `<strong>Nala：</strong>「${stage.dialogue}」`;
         document.getElementById("question-text").innerText = stage.question;
 
+        // 隨機打亂選項順序
+        const randomizedOptions = shuffleArray(stage.options);
         const optionsContainer = document.getElementById("options-container");
         optionsContainer.innerHTML = "";
         
-        stage.options.forEach(option => {
+        randomizedOptions.forEach(option => {
             const btn = document.createElement("button");
             btn.className = "option-btn";
             btn.innerText = option;
@@ -371,8 +420,7 @@
         const timeStr = `${minutes}:${seconds}`;
         const dateStr = new Date().toISOString().slice(0, 10);
 
-        // 儲存至 LocalStorage
-        let records = JSON.parse(localStorage.getItem("conan_math_records") || "[]");
+        let records = JSON.parse(localStorage.getItem("conan_math_random_records") || "[]");
         records.push({
             name: playerName,
             score: score,
@@ -381,19 +429,17 @@
             date: dateStr
         });
 
-        // 排序：分數高者優先，花費時間少者優先
         records.sort((a, b) => {
             if (b.score !== a.score) return b.score - a.score;
             return a.rawTime - b.rawTime;
         });
 
-        // 取前 5 名
         records = records.slice(0, 5);
-        localStorage.setItem("conan_math_records", JSON.stringify(records));
+        localStorage.setItem("conan_math_random_records", JSON.stringify(records));
 
         document.getElementById("final-summary").innerHTML = `
             <strong>偵探 ${playerName}：</strong><br>
-            你已成功破解所有案件！<br>
+            你已成功破解所有隨機案件！<br>
             最終得分：<strong>${score} 分</strong> | 總花費時間：<strong>${timeStr}</strong>
         `;
 
@@ -402,7 +448,7 @@
 
     function renderLeaderboard(tbodyId) {
         const tbody = document.getElementById(tbodyId);
-        const records = JSON.parse(localStorage.getItem("conan_math_records") || "[]");
+        const records = JSON.parse(localStorage.getItem("conan_math_random_records") || "[]");
         
         if (records.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5">目前尚無記錄</td></tr>`;
