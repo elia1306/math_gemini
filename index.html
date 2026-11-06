@@ -25,7 +25,7 @@
         }
         .game-container {
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             background: var(--card-bg);
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -76,9 +76,13 @@
             text-align: left;
             transition: all 0.3s;
         }
-        .option-btn:hover {
+        .option-btn:hover:not(:disabled) {
             background: var(--accent-color);
             border-color: #c0392b;
+        }
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
         }
         .feedback {
             margin-top: 15px;
@@ -99,27 +103,129 @@
             border-bottom: 1px solid #34495e;
             padding-bottom: 10px;
         }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group input {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #34495e;
+            width: 60%;
+            margin-top: 10px;
+            background: #0f3460;
+            color: white;
+            text-align: center;
+        }
+        .start-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            transition: background 0.3s;
+        }
+        .start-btn:hover {
+            background: #219653;
+        }
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .leaderboard-table th, .leaderboard-table td {
+            border: 1px solid #34495e;
+            padding: 8px;
+            text-align: center;
+        }
+        .leaderboard-table th {
+            background-color: #0f3460;
+            color: #f1c40f;
+        }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="game-container">
-    <h1>🔍 名偵探柯南：數學解謎事件簿</h1>
-    <div class="subtitle">主題：最大公因數 (HCF) 與最小公倍數 (LCM)</div>
-    
-    <div class="score-board">
-        <span id="level-indicator">目前進度：第 1 / 5 關</span>
-        <span id="score-indicator">得分：0 分</span>
+<div class="game-container" id="app-container">
+    <!-- 首頁：輸入姓名與說明 -->
+    <div id="welcome-screen">
+        <h1>🔍 名偵探柯南：數學解謎事件簿</h1>
+        <div class="subtitle">專為六年級設計：最大公因數與最小公倍數闖關</div>
+        <div class="conan-box">
+            <strong>柯南：</strong>「歡迎來到少年偵探團特訓！這次總共有 **5 個挑戰關卡**。系統會為您計時並記錄排行榜，快輸入你的名字開始挑戰吧！」
+        </div>
+        <div class="form-group">
+            <label for="player-name">請輸入挑戰者姓名：</label><br>
+            <input type="text" id="player-name" placeholder="例如：小明偵探" value="優秀偵探">
+        </div>
+        <button class="start-btn" onclick="startGame()">開始解謎闖關</button>
+        
+        <div style="margin-top: 30px;">
+            <h3 style="color: #f1c40f; font-size: 16px; text-align: center;">🏆 歷史排行榜 Top 5</h3>
+            <table class="leaderboard-table" id="leaderboard-preview">
+                <thead>
+                    <tr>
+                        <th>排名</th>
+                        <th>姓名</th>
+                        <th>得分</th>
+                        <th>花費時間</th>
+                        <th>日期</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body">
+                    <tr><td colspan="5">目前尚無記錄</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="conan-box" id="conan-dialogue">
-        <strong>柯南：</strong>「兇手在米花市留下了一串神祕的數學密碼！小蘭和少年偵探團陷入了危機，快用你的數學邏輯幫我解開這個謎題吧！」
+    <!-- 遊戲畫面 -->
+    <div id="game-screen" class="hidden">
+        <h1>🔍 數學解謎進行中</h1>
+        <div class="subtitle" id="player-welcome-tag">挑戰者：</div>
+        
+        <div class="score-board">
+            <span id="level-indicator">目前進度：第 1 / 5 關</span>
+            <span id="timer-indicator">⏱️ 時間：00:00</span>
+            <span id="score-indicator">得分：0 分</span>
+        </div>
+
+        <div class="conan-box" id="conan-dialogue"></div>
+
+        <div id="quiz-area">
+            <div class="question-box" id="question-text"></div>
+            <div class="options-group" id="options-container"></div>
+            <div class="feedback" id="feedback-box"></div>
+        </div>
     </div>
 
-    <div id="quiz-area">
-        <div class="question-box" id="question-text">載入中...</div>
-        <div class="options-group" id="options-container"></div>
-        <div class="feedback" id="feedback-box"></div>
+    <!-- 結算畫面 -->
+    <div id="result-screen" class="hidden">
+        <h1 style="color: #2ecc71;">🎉 恭喜破案！</h1>
+        <div class="conan-box" id="final-summary"></div>
+        
+        <h3 style="color: #f1c40f; text-align: center;">🏆 本次排行榜</h3>
+        <table class="leaderboard-table" id="final-leaderboard-table">
+            <thead>
+                <tr>
+                    <th>排名</th>
+                    <th>姓名</th>
+                    <th>得分</th>
+                    <th>花費時間</th>
+                    <th>日期</th>
+                </tr>
+            </thead>
+            <tbody id="final-leaderboard-body"></tbody>
+        </table>
+
+        <button class="start-btn" style="margin-top: 25px;" onclick="location.reload()">再次挑戰</button>
     </div>
 </div>
 
@@ -167,19 +273,49 @@
         }
     ];
 
+    let playerName = "";
     let currentStage = 0;
     let score = 0;
+    let startTime = 0;
+    let timerInterval = null;
+    let elapsedTimeSeconds = 0;
+
+    // 初始化載入排行榜預覽
+    window.onload = function() {
+        renderLeaderboard("leaderboard-body");
+    };
+
+    function startGame() {
+        const inputName = document.getElementById("player-name").value.trim();
+        if (!inputName) {
+            alert("請輸入您的名字才能開始挑戰喔！");
+            return;
+        }
+        playerName = inputName;
+        document.getElementById("player-welcome-tag").innerText = `挑戰者：${playerName}`;
+
+        // 切換畫面
+        document.getElementById("welcome-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+
+        // 啟動計時器
+        startTime = Date.now();
+        timerInterval = setInterval(updateTimer, 1000);
+
+        loadStage();
+    }
+
+    function updateTimer() {
+        const now = Date.now();
+        elapsedTimeSeconds = Math.floor((now - startTime) / 1000);
+        const minutes = String(Math.floor(elapsedTimeSeconds / 60)).padStart(2, '0');
+        const seconds = String(elapsedTimeSeconds % 60).padStart(2, '0');
+        document.getElementById("timer-indicator").innerText = `⏱️ 時間：${minutes}:${seconds}`;
+    }
 
     function loadStage() {
         if (currentStage >= stages.length) {
-            document.getElementById("game-container").innerHTML = `
-                <h1 style="color: #2ecc71;">🎉 恭喜破案！</h1>
-                <p style="text-align: center; font-size: 18px; line-height: 1.8;">
-                    你成功協助柯南解開了所有的數學謎題，獲得了「頂尖少年偵探」的殊榮！<br>
-                    最終得分：<strong>${score} 分</strong>
-                </p>
-                <button class="option-btn" style="text-align: center; margin-top: 20px;" onclick="location.reload()">重新挑戰一次</button>
-            `;
+            endGame();
             return;
         }
 
@@ -207,7 +343,6 @@
         const feedbackBox = document.getElementById("feedback-box");
         feedbackBox.style.display = "block";
 
-        // 禁用所有選項避免重複點擊
         const buttons = document.querySelectorAll(".option-btn");
         buttons.forEach(btn => btn.disabled = true);
 
@@ -226,8 +361,67 @@
         }, 4000);
     }
 
-    // 初始化遊戲
-    loadStage();
+    function endGame() {
+        clearInterval(timerInterval);
+        document.getElementById("game-screen").classList.add("hidden");
+        document.getElementById("result-screen").classList.remove("hidden");
+
+        const minutes = String(Math.floor(elapsedTimeSeconds / 60)).padStart(2, '0');
+        const seconds = String(elapsedTimeSeconds % 60).padStart(2, '0');
+        const timeStr = `${minutes}:${seconds}`;
+        const dateStr = new Date().toISOString().slice(0, 10);
+
+        // 儲存至 LocalStorage
+        let records = JSON.parse(localStorage.getItem("conan_math_records") || "[]");
+        records.push({
+            name: playerName,
+            score: score,
+            time: timeStr,
+            rawTime: elapsedTimeSeconds,
+            date: dateStr
+        });
+
+        // 排序：分數高者優先，花費時間少者優先
+        records.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return a.rawTime - b.rawTime;
+        });
+
+        // 取前 5 名
+        records = records.slice(0, 5);
+        localStorage.setItem("conan_math_records", JSON.stringify(records));
+
+        document.getElementById("final-summary").innerHTML = `
+            <strong>偵探 ${playerName}：</strong><br>
+            你已成功破解所有案件！<br>
+            最終得分：<strong>${score} 分</strong> | 總花費時間：<strong>${timeStr}</strong>
+        `;
+
+        renderLeaderboard("final-leaderboard-body");
+    }
+
+    function renderLeaderboard(tbodyId) {
+        const tbody = document.getElementById(tbodyId);
+        const records = JSON.parse(localStorage.getItem("conan_math_records") || "[]");
+        
+        if (records.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5">目前尚無記錄</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = "";
+        records.forEach((rec, index) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>第 ${index + 1} 名</td>
+                <td>${rec.name}</td>
+                <td>${rec.score} 分</td>
+                <td>${rec.time}</td>
+                <td>${rec.date}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
 </script>
 
 </body>
