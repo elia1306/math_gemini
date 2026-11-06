@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>名偵探柯南：最大公因數與最小公倍數解謎大冒險</title>
+    <title>名偵探Nala：最大公因數與最小公倍數解謎大冒險</title>
     <style>
         :root {
             --primary-color: #1a1a2e;
@@ -156,10 +156,10 @@
 <div class="game-container" id="app-container">
     <!-- 首頁：輸入姓名與說明 -->
     <div id="welcome-screen">
-        <h1>🔍 名偵探柯南：數學解謎事件簿</h1>
+        <h1>🔍 名偵探Nala：數學解謎事件簿</h1>
         <div class="subtitle">專為六年級設計：最大公因數與最小公倍數闖關</div>
         <div class="conan-box">
-            <strong>柯南：</strong>「歡迎來到少年偵探團特訓！這次總共有 **5 個挑戰關卡**。系統會為您計時並記錄排行榜，快輸入你的名字開始挑戰吧！」
+            <strong>Nala：</strong>「歡迎來到少年偵探團特訓！這次總共有 **5 個挑戰關卡**。系統會為您計時並記錄排行榜，快輸入你的名字開始挑戰吧！」
         </div>
         <div class="form-group">
             <label for="player-name">請輸入挑戰者姓名：</label><br>
@@ -233,7 +233,7 @@
     const stages = [
         {
             title: "事件一：炸彈的拆除密碼（最大公因數）",
-            dialogue: "柯南：「拆彈專家遇到難題了！必須把 24 顆紅寶石和 36 顆藍寶石平均分裝到多個盒子裡，每個盒子裡的紅寶石要一樣多、藍寶石也要一樣多，請問**最多**可以裝成幾個盒子？」",
+            dialogue: "Nala：「拆彈專家遇到難題了！必須把 24 顆紅寶石和 36 顆藍寶石平均分裝到多個盒子裡，每個盒子裡的紅寶石要一樣多、藍寶石也要一樣多，請問**最多**可以裝成幾個盒子？」",
             question: "求 24 和 36 的最大公因數 (HCF) 是多少？",
             options: ["6", "12", "18", "24"],
             answer: "12",
@@ -241,7 +241,7 @@
         },
         {
             title: "事件二：黑衣組織的巡邏車（最小公倍數）",
-            dialogue: "柯南：「我們必須避開黑衣組織的巡邏車。A車每 6 分鐘發車一次，B車每 8 分鐘發車一次。如果他們剛好在 12:00 同時發車，下一次**同時發車**是幾分鐘後？」",
+            dialogue: "Nala：「我們必須避開黑衣組織的巡邏車。A車每 6 分鐘發車一次，B車每 8 分鐘發車一次。如果他們剛好在 12:00 同時發車，下一次**同時發車**是幾分鐘後？」",
             question: "求 6 和 8 的最小公倍數 (LCM) 是多少？",
             options: ["12 分鐘", "24 分鐘", "48 分鐘", "72 分鐘"],
             answer: "24 分鐘",
@@ -249,7 +249,7 @@
         },
         {
             title: "事件三：神祕的磚塊密室（應用題）",
-            dialogue: "柯南：「密室的牆壁長 60 公分、寬 45 公分。如果想用大小完全相同的正方形磁磚把它鋪滿，且磁磚不能切割，正方形磁磚的邊長**最大**是多少公分？」",
+            dialogue: "Nala：「密室的牆壁長 60 公分、寬 45 公分。如果想用大小完全相同的正方形磁磚把它鋪滿，且磁磚不能切割，正方形磁磚的邊長**最大**是多少公分？」",
             question: "求 60 和 45 的最大公因數？",
             options: ["5 公分", "10 公分", "15 公分", "30 公分"],
             answer: "15 公分",
@@ -257,7 +257,7 @@
         },
         {
             title: "事件四：怪盜基德的預告信（最小公倍數）",
-            dialogue: "柯南：「怪盜基德要在美術館下手！警報器每 15 分鐘閃爍一次，攝影機每 20 分鐘掃描一次。剛好在 10:00 同時閃爍與掃描，下次**同時發生**是在幾分鐘後？」",
+            dialogue: "Nala：「怪盜基德要在美術館下手！警報器每 15 分鐘閃爍一次，攝影機每 20 分鐘掃描一次。剛好在 10:00 同時閃爍與掃描，下次**同時發生**是在幾分鐘後？」",
             question: "求 15 和 20 的最小公倍數？",
             options: ["30 分鐘", "45 分鐘", "60 分鐘", "120 分鐘"],
             answer: "60 分鐘",
@@ -265,7 +265,7 @@
         },
         {
             title: "最終決戰：解開最終真相",
-            dialogue: "柯南：「這是最後一題了！有一籃橘子，不管是 4 個一數或 6 個一數，都剛好分完沒有剩餘。如果這籃橘子大約有 30 幾顆，請問總共有幾顆？」",
+            dialogue: "Nala：「這是最後一題了！有一籃橘子，不管是 4 個一數或 6 個一數，都剛好分完沒有剩餘。如果這籃橘子大約有 30 幾顆，請問總共有幾顆？」",
             question: "找出 4 和 6 的公倍數中，在 30 到 40 之間的數字：",
             options: ["32 顆", "36 顆", "38 顆", "40 顆"],
             answer: "36 顆",
@@ -322,7 +322,7 @@
         const stage = stages[currentStage];
         document.getElementById("level-indicator").innerText = `目前進度：第 ${currentStage + 1} / ${stages.length} 關`;
         document.getElementById("score-indicator").innerText = `得分：${score} 分`;
-        document.getElementById("conan-dialogue").innerHTML = `<strong>柯南：</strong>「${stage.dialogue}」`;
+        document.getElementById("conan-dialogue").innerHTML = `<strong>Nala：</strong>「${stage.dialogue}」`;
         document.getElementById("question-text").innerText = stage.question;
 
         const optionsContainer = document.getElementById("options-container");
