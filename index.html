@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>名偵探柯南：最大公因數與最小公倍數解謎大冒險</title>
+    <style>
+        :root {
+            --primary-color: #1a1a2e;
+            --accent-color: #e94560;
+            --bg-color: #0f3460;
+            --card-bg: #16213e;
+            --text-color: #ffffff;
+        }
+        body {
+            font-family: "Microsoft JhengHei", Arial, sans-serif;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .game-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 30px;
+            box-sizing: border-box;
+            border: 2px solid var(--accent-color);
+        }
+        h1 {
+            text-align: center;
+            color: #f39c12;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #bdc3c7;
+            margin-bottom: 25px;
+        }
+        .conan-box {
+            background: rgba(233, 69, 96, 0.1);
+            border-left: 5px solid var(--accent-color);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .question-box {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .option-btn {
+            background: #0f3460;
+            color: white;
+            border: 2px solid #34495e;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: left;
+            transition: all 0.3s;
+        }
+        .option-btn:hover {
+            background: var(--accent-color);
+            border-color: #c0392b;
+        }
+        .feedback {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+        .success { background: #27ae60; color: white; }
+        .error { background: #c0392b; color: white; }
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #f1c40f;
+            border-bottom: 1px solid #34495e;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>🔍 名偵探柯南：數學解謎事件簿</h1>
+    <div class="subtitle">主題：最大公因數 (HCF) 與最小公倍數 (LCM)</div>
+    
+    <div class="score-board">
+        <span id="level-indicator">目前進度：第 1 / 5 關</span>
+        <span id="score-indicator">得分：0 分</span>
+    </div>
+
+    <div class="conan-box" id="conan-dialogue">
+        <strong>柯南：</strong>「兇手在米花市留下了一串神祕的數學密碼！小蘭和少年偵探團陷入了危機，快用你的數學邏輯幫我解開這個謎題吧！」
+    </div>
+
+    <div id="quiz-area">
+        <div class="question-box" id="question-text">載入中...</div>
+        <div class="options-group" id="options-container"></div>
+        <div class="feedback" id="feedback-box"></div>
+    </div>
+</div>
+
+<script>
+    const stages = [
+        {
+            title: "事件一：炸彈的拆除密碼（最大公因數）",
+            dialogue: "柯南：「拆彈專家遇到難題了！必須把 24 顆紅寶石和 36 顆藍寶石平均分裝到多個盒子裡，每個盒子裡的紅寶石要一樣多、藍寶石也要一樣多，請問**最多**可以裝成幾個盒子？」",
+            question: "求 24 和 36 的最大公因數 (HCF) 是多少？",
+            options: ["6", "12", "18", "24"],
+            answer: "12",
+            explanation: "沒錯！24 的因數有 12，36 的因數也有 12，最大公因數就是 12 盒。炸彈安全解除！"
+        },
+        {
+            title: "事件二：黑衣組織的巡邏車（最小公倍數）",
+            dialogue: "柯南：「我們必須避開黑衣組織的巡邏車。A車每 6 分鐘發車一次，B車每 8 分鐘發車一次。如果他們剛好在 12:00 同時發車，下一次**同時發車**是幾分鐘後？」",
+            question: "求 6 和 8 的最小公倍數 (LCM) 是多少？",
+            options: ["12 分鐘", "24 分鐘", "48 分鐘", "72 分鐘"],
+            answer: "24 分鐘",
+            explanation: "太棒了！6 和 8 的最小公倍數是 24。每 24 分鐘兩車會同時出發，我們趁現在快溜過去！"
+        },
+        {
+            title: "事件三：神祕的磚塊密室（應用題）",
+            dialogue: "柯南：「密室的牆壁長 60 公分、寬 45 公分。如果想用大小完全相同的正方形磁磚把它鋪滿，且磁磚不能切割，正方形磁磚的邊長**最大**是多少公分？」",
+            question: "求 60 和 45 的最大公因數？",
+            options: ["5 公分", "10 公分", "15 公分", "30 公分"],
+            answer: "15 公分",
+            explanation: "推理正確！60 和 45 的最大公因數是 15，所以最大正方形邊長為 15 公分，牆壁機關打開了！"
+        },
+        {
+            title: "事件四：怪盜基德的預告信（最小公倍數）",
+            dialogue: "柯南：「怪盜基德要在美術館下手！警報器每 15 分鐘閃爍一次，攝影機每 20 分鐘掃描一次。剛好在 10:00 同時閃爍與掃描，下次**同時發生**是在幾分鐘後？」",
+            question: "求 15 和 20 的最小公倍數？",
+            options: ["30 分鐘", "45 分鐘", "60 分鐘", "120 分鐘"],
+            answer: "60 分鐘",
+            explanation: "神乎其技！15 和 20 的最小公倍數是 60 分鐘（也就是 1 小時），我們抓準時間準備堵截基德！"
+        },
+        {
+            title: "最終決戰：解開最終真相",
+            dialogue: "柯南：「這是最後一題了！有一籃橘子，不管是 4 個一數或 6 個一數，都剛好分完沒有剩餘。如果這籃橘子大約有 30 幾顆，請問總共有幾顆？」",
+            question: "找出 4 和 6 的公倍數中，在 30 到 40 之間的數字：",
+            options: ["32 顆", "36 顆", "38 顆", "40 顆"],
+            answer: "36 顆",
+            explanation: "太厲害了！4 和 6 的最小公倍數是 12，其倍數有 12、24、36、48...。介於 30 到 40 之間的只有 36 顆！真相永遠只有一個，你成功破案了！"
+        }
+    ];
+
+    let currentStage = 0;
+    let score = 0;
+
+    function loadStage() {
+        if (currentStage >= stages.length) {
+            document.getElementById("game-container").innerHTML = `
+                <h1 style="color: #2ecc71;">🎉 恭喜破案！</h1>
+                <p style="text-align: center; font-size: 18px; line-height: 1.8;">
+                    你成功協助柯南解開了所有的數學謎題，獲得了「頂尖少年偵探」的殊榮！<br>
+                    最終得分：<strong>${score} 分</strong>
+                </p>
+                <button class="option-btn" style="text-align: center; margin-top: 20px;" onclick="location.reload()">重新挑戰一次</button>
+            `;
+            return;
+        }
+
+        const stage = stages[currentStage];
+        document.getElementById("level-indicator").innerText = `目前進度：第 ${currentStage + 1} / ${stages.length} 關`;
+        document.getElementById("score-indicator").innerText = `得分：${score} 分`;
+        document.getElementById("conan-dialogue").innerHTML = `<strong>柯南：</strong>「${stage.dialogue}」`;
+        document.getElementById("question-text").innerText = stage.question;
+
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+        
+        stage.options.forEach(option => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.innerText = option;
+            btn.onclick = () => checkAnswer(option, stage.answer, stage.explanation);
+            optionsContainer.appendChild(btn);
+        });
+
+        document.getElementById("feedback-box").style.display = "none";
+    }
+
+    function checkAnswer(selected, correct, explanation) {
+        const feedbackBox = document.getElementById("feedback-box");
+        feedbackBox.style.display = "block";
+
+        // 禁用所有選項避免重複點擊
+        const buttons = document.querySelectorAll(".option-btn");
+        buttons.forEach(btn => btn.disabled = true);
+
+        if (selected === correct) {
+            score += 20;
+            feedbackBox.className = "feedback success";
+            feedbackBox.innerHTML = `✅ 答對了！${explanation}`;
+        } else {
+            feedbackBox.className = "feedback error";
+            feedbackBox.innerHTML = `❌ 哎呀，答錯囉！正確答案是：${correct}。${explanation}`;
+        }
+
+        setTimeout(() => {
+            currentStage++;
+            loadStage();
+        }, 4000);
+    }
+
+    // 初始化遊戲
+    loadStage();
+</script>
+
+</body>
+</html>
